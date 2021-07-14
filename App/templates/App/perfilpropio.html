@@ -1,0 +1,238 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+   <!--473 134 3654-->
+<script>
+  var z = '{{como}}'  //como es un array de id_s de los posts pasado      
+  $(document).ready(function() {
+    var tex= '{{como}}';
+    var cad=[];
+    var cad1=[];
+    var cad2=[];
+    var cad3=[];
+    var a=0;
+    var w=0;
+    var u=0;
+    tex=tex.replace(/&gt/g,'');tex=tex.replace(/&lt;Posts: /g,'');tex=tex.replace(/&lt;Posts:/g,'');tex=tex.replace(/;Posts:/g,'');tex=tex.replace(/&lt/g,'');tex=tex.replace(/]/g,'');tex=tex.replace(/;/g,'');tex=tex.replace( '[' ,'');tex=tex.split(', ');
+    
+    for (i in tex){
+      cad.push("#A" + tex[i]);
+      cad1.push("#C" + tex[i]);
+      cad2.push("#E" + tex[i]);
+      cad3.push("#D" + tex[i]);
+      //alert(cad[i]);
+    }
+    for (let i=0; i< tex.length;i++) {
+      $(cad[i]).hide();
+      
+      $(cad1[i]).click(function () {
+        if (w==0){
+        $(cad[i]).show(); 
+        w=1;
+        }
+        else{
+        $(cad[i]).hide(); 
+        w=0;
+        }
+      });
+
+      $(cad2[i]).hide();
+      
+      $(cad3[i]).click(function () {
+        if (u==0){
+        $(cad2[i]).show(); 
+        u=1;
+        }
+        else{
+        $(cad2[i]).hide(); 
+        u=0;
+        }
+      });
+           
+    }
+   
+    $('#cambiar').hide()
+    $('#fota').hide();
+    $('#foto').click(function () {
+      $(this).hide();
+      if (a==0){
+        
+        $('#fota').show();
+        $('#cambiar').show()
+        a=1;
+     }
+      
+    });
+    $('#fota').click(function () {
+      $(this).hide();
+      $('#cambiar').hide()
+      $('#formu').hide()
+      $('#foto').show();
+        a=0;
+      
+    })
+    
+
+    $('#formu').hide();
+    $('#cambiar').click(function () {
+      
+      $('#formu').show();
+        
+      
+    })
+  
+  });
+
+  </script>
+  <style>
+    .foto2{
+      max-width: 63%;
+      height: auto;
+      border: black; 
+    }
+    .foto1{
+      position: fixed relative ;
+      padding-bottom: 10%;
+      align-self: center;
+      max-width: 100%;
+      height: auto;
+      border: black; 
+    }
+
+  </style>
+
+   <!-- Heading -->
+<div class="wrapper">
+   {% for perfil in Usuarios %}
+      <br><br>
+        <div class="container" >
+          <div style="background-color: cadetblue; padding: 1%; border-radius: 10px;">
+            <div   >
+              
+              {% if perfil.Foto %}
+              <img id="foto" style="width: 15%;" class="foto2"  src="{{perfil.Foto.url}}" >
+              <img id="fota" src="{{perfil.Foto.url}}"  align="center" style= "width: 80%; background-color: black; position: fixed relative; padding: 10%;">
+            {% else %}
+              <img id="foto" style="width: 15%;" class="foto2"  src="../media/Posts/bg_main.jpg" >
+              <img id="fota" src="../media/Posts/bg_main.jpg"  align="center" style= "width: 80%; background-color: black; position: fixed relative; padding: 10%;">
+              {% endif %} <br>
+              <span >
+                <span id="cambiar" style="color: blue;">Cambiar foto de perfil</span>  
+              
+                <form id="formu" action="../ActualizarPerfil" method="POST" enctype="multipart/form-data">  
+                  {% csrf_token %} 
+                  <input type="file" name="FOTO">
+                  <input type="submit" value="cambiar foto" >
+                </form>
+              </span>  
+            </div> 
+            <div >
+
+              <h2 class="section-heading mb-4" >
+                <span class="section-heading-lower">{{perfil.usuario.username}}</span>
+              </h2>   
+              <span class="section-heading-upper">{{perfil.Descripcion}}</span>
+            </div>  
+              
+            
+          </div>
+          
+        </div>
+      
+      <br>  
+  {% endfor %}
+  
+<br>
+
+
+
+  {% for post in posteos %}
+
+    <div class="container">
+        <div style="background-color: palegreen ; border: black; border-radius: 5px ;">
+          <div style="padding-left: 10%; padding-right: 10%; padding-top: 2%; border: black; border-width: 20px;">
+            <span >
+              {% if Usuarios.0.Foto %}
+
+                <img  style="border: black; border-radius: 20px ;width: 5%;" src="{{Usuarios.0.Foto.url}}" alt="as_table" >
+              {% else %}
+        
+                <img   style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 5%;" src="../media/Posts/bg_main.jpg" alt="as_table" >
+              {% endif %}
+            </span>  
+            <span class="section-heading-upper" style="font-size: 200% ;text-align: left; font-family: cursive;">
+              <a href="visita/{{post.Author.id}}">{{post.Author.username}}</a>
+            </span>
+      
+            <div align="center"; style="padding-top: 2%; padding-bottom: 2%; background-color: aqua;border-radius: 20px ;" >
+              <div align="left"; style="padding-left: 1%; ;background-color:mediumseagreen; width: 97%; border-radius: 10px;">
+                <span class="section-heading-upper" style="color: crimson; text-align: left; font-family:cursive; ">{{post.Nombre}}</span><br>
+                <span class="section-heading-upper" style=" color: black;text-align: left; background-color:mediumseagreen;">{{post.Descripcion}}</span><br>
+            
+              </div>
+              
+            
+            
+              <div align="center"; style="border: black; ">
+                {% if post.Foto %}
+                <img   style="border: black; border-radius: 20px ;width: 97%;" src="{{post.Foto.url}}" alt="as_table" >
+                {% endif %}
+              </div>
+          
+            </div>
+            
+              <form method="POST" action="../me_gusta">
+              {% csrf_token %}
+              <input type="text" value="{{post.id}}" name="postid" style="font-size: 0px;visibility: hidden;">
+              <input type="text" value="2" name="estaesvisita" style="visibility: hidden; font-size: 0px;">
+             
+              {% if post in postslikeados  %}   <!--Recibimos y trabajamos con likes del activo, arreglo de posts likesados-->
+              <input type="text" value="0" name="valor" style="font-size: 0px;visibility: hidden;">
+              <div >
+              <input type="submit" style="align-items: flex-end ;font-family:cursive; color: blue; border-radius: 10px; text-align: right;" value="Me gusta">
+            </div>
+              {% else %}
+              <input type="text" value="1" name="valor" style="font-size: 0px;visibility: hidden;">
+              <div >
+                <input type="submit" style=" font-family: fantasy; border-radius: 10px; text-align: right;" value="Me gusta" >
+              </div>
+              {% endif %}
+              
+              </form>
+              <span style="font-weight: 500;">Likes: {{post.me_gustas}}</span><br>
+          
+            <span id='C{{post.id}}' style="font: size 0.5em;;">Comentarios</span><br>
+            <div id='A{{post.id}}'>
+            {% for comentario in comentarios %} 
+            
+            {% ifequal comentario.Post  post %}
+            
+            {{comentario.Author}}: <span class="section-heading-upper">{{comentario.Coment}}</span><br>
+              {% endifequal %}
+              {% endfor %}
+            </div>
+              
+            <span id="D{{post.id}}">Comentar</span>
+
+            <div style="padding-block-end: 1%;">
+              <form action="../Comentario" method="POST" id="E{{post.id}}">
+              {% csrf_token %}
+                <input type="text" name="texto">
+              <input type="submit" value="Enviar Comentario"> 
+              <input type="text" value="{{post.id}}" name="postId" style=" font-size: 0px;visibility: hidden; ">
+              <input type="text" value="{{activos}}" name="activos" style="font-size: 0px;visibility: hidden;">
+              <input type="text" value="{{post.Author.id}}" name="visitado" style=" font-size: 0px;visibility: hidden; ">
+              
+            </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <br>
+
+  {% endfor %}
+
+</div>
+{% endblock %}

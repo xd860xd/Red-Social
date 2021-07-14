@@ -1,0 +1,170 @@
+<html>
+
+<head>
+
+  {% load static %}
+    
+    <!-- Bootstrap -->
+    <link href="{% static 'App/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+     <!-- Fonts -->
+    
+     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet"> 
+     <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet">
+     
+
+    <!-- Styles -->
+    <link href="{% static 'App/css/gestion.css' %}" rel="stylesheet">
+    <style>
+      body, html{ margin: 0;padding: 0;}
+      .header{border-top:1px solid white; color: blue;height: 8%; width: 100%; text-align: center;}      
+      .menu{height: 60px; width: 100%; color: white; text-align: center;}
+      .wrapper{height: 200px; width: 100%; padding-top: 20px;}
+      .fixed{position: fixed; top: 0; }
+    </style>
+    <script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+    <script>
+      posicionarMenu();
+      $(window).scroll(function () {
+        posicionarMenu();
+      });
+      function posicionarMenu() {
+        var altura_header=$('.header').outerHeight(true);
+        var altura_menu=$('.menu').outerHeight(true);
+        if ($(window).scrollTop() >= altura_header){
+          $('.menu').addClass('fixed');  
+          $('.wrapper').css('margin-top',(altura_menu) + 'px');
+        }else{
+          $('.menu').removeClass('fixed');  
+          $('.wrapper').css('margin-top','0');
+        }
+        
+      }
+    </script>
+</head>
+
+<body class="cambio">
+
+   <h1 class="header" class="text-uppercase text-center text-white d-none d-lg-block " style="color: white;">
+
+        <span class="site-heading-lower" >RED SOCIAL</span>
+      </h1>
+      
+
+ <!-- Navbar -->
+ <div class="menu" >
+ <nav class="navbar navbar-expand-lg navbar-dark py-lg-3"  id="mainNav">
+    <div class="container" >
+      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" >RED SOCIAL</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item {% if request.path == '/' %}active {% endif %} px-lg-4">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'logout' %}?next=/">Cerrar Sesion</a>
+          </li>
+          <li class="nav-item {% if request.path == '/Notificaciones/' %}active {% endif %} px-lg-4">
+            <a class="nav-link text-uppercase text-expanded"  href="{% url 'Inicio' %}">Inicio</a>
+          </li>
+          <li class="nav-item {% if request.path == '/Notificaciones/' %}active {% endif %} px-lg-4">
+            <a class="nav-link text-uppercase text-expanded"  href="{% url 'mensajes' %}">Mensajes {{CDM}}</a>
+          </li>
+          <li class="nav-item {% if request.path == '/Notificaciones/' %}active {% endif %} px-lg-4">
+            <a class="nav-link text-uppercase text-expanded"  href="{% url 'Notificaciones' %}">Notificaciones {{CDN}}</a>
+          </li>
+          <li class="nav-item {% if request.path == '' %}active {% endif %} px-lg-4">
+            <a class="nav-link text-uppercase text-expanded"  href="{% url 'visita' usuarios=id %}">Perfil</a>
+          </li>
+         
+         
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+    <div style="padding-left: 6%; padding-right: 6%; ">
+  
+      <div class="col-md-12 search">
+        <div >
+        <form action="../home" method="POST">
+          {% csrf_token %}
+          <div id="custom-search-input">
+  
+            <div class="input-group col-md-12">
+              
+              <input type="text" class="form-control" placeholder="Buscar..." name="buscar">
+              
+              <span class="input-group-list">
+  
+                <i class="icon icon-search"></i>
+                <button type="submit" class="form-control" style="background-color: green; color: black; font-family: cursive;">Buscar</button>
+  
+              </span>
+  
+            </div>
+  
+          </div>
+  
+        </form>
+      </div>
+      </div>
+  
+    </div>
+  
+
+</div>
+
+<br>
+
+  
+   <!-- Contenido cambiante -->
+    {% block content %}
+
+    {% endblock %}
+  
+    
+
+
+    <!-- Footer -->
+   <!-- <footer class="footer text-faded text-center py-5">
+      <div class="container">
+        <p class="m-0">
+	        <a href="#" class="link">
+	          <span class="fa-stack fa-lg">
+	            <i class="fa fa-circle fa-stack-2x"></i>
+	            <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+	          </span>
+	        </a>
+	        <a href="#" class="link">
+	          <span class="fa-stack fa-lg">
+	            <i class="fa fa-circle fa-stack-2x"></i>
+	            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+	          </span>
+	        </a>
+	        <a href="#" class="link">
+	          <span class="fa-stack fa-lg">
+	            <i class="fa fa-circle fa-stack-2x"></i>
+	            <i class="fa fa-instagram fa-stack-1x fa-inverse"></i>
+	          </span>
+	        </a>
+	    </p>
+        <p class="m-0 mbt">
+        	<a href="sample.html" class="link">Política de privacidad</a> ·
+        	<a href="sample.html" class="link">Aviso legal</a> ·
+        	<a href="sample.html" class="link">Cookies</a>
+		</p>
+        <p class="m-0 mbt1">&copy; Gestión de Pedidos 2020</p>
+      </div>
+	</footer>
+-->
+    <!-- Bootstrap -->
+
+    <script src="{% static 'App/vendor/jquery/jquery.min.js' %}"></script>
+   
+    <script src="{% static 'App/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+
+
+</html>

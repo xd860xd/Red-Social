@@ -1,0 +1,208 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+<script>
+  var z = '{{como}}';
+  p= '{{Posts.1}}';
+     
+  $(document).ready(function() {
+    var tex= '{{como}}';
+    var cad=[];
+    var cad1=[];
+    var cad2=[];
+    var cad3=[];
+    var z=0;
+    var j=0;
+    var d=0;
+    tex=tex.replace(/&gt/g,'');tex=tex.replace(/&lt;Posts: /g,'');tex=tex.replace(/&lt;Posts:/g,'');tex=tex.replace(/;Posts:/g,'');tex=tex.replace(/&lt/g,'');tex=tex.replace(/]/g,'');tex=tex.replace(/;/g,'');tex=tex.replace( '[' ,'');tex=tex.split(', ');
+   
+    for (i in tex){
+      cad.push("#A" + tex[i]);
+      cad1.push("#C" + tex[i]);
+      cad2.push('#D' + tex[i]);
+      cad3.push('#E' + tex[i]);
+      //alert(cad[i]);
+    }
+    for (let i=0; i< tex.length;i++){
+      $(cad[i]).hide();
+      $(cad1[i]).click(function () {
+        if (z==0){
+          $(cad[i]).show();
+          z+=1;
+        }
+        else{
+          $(cad[i]).hide();
+          z=0;
+        }
+      });
+      
+      $(cad3[i]).hide();
+      $(cad2[i]).click(function () {
+        if (j==0){
+          $(cad3[i]).show();
+          j+=1;
+        }
+        else{
+          $(cad3[i]).hide();
+          j=0;
+        }
+    
+      });
+     }
+  $('#posteo').hide()
+  $('#postear').click(function () {
+    
+    if (d==0){
+      $('#posteo').show() ;
+      d=1; 
+    }else{
+      $('#posteo').hide() ;
+      d=0;
+    }
+    
+  });
+  
+  });
+    
+  </script>
+
+<div class="wrapper">
+<br>
+
+<!--
+{% for solisitud in solisitudes %}
+<section class="page-section clearfix" >
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{{post.Foto.url}}" alt=""style="width:50%;"">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-lower">{{solisitud.FROM_usuario}}</span>
+            <form action="ProcesarSolicitud" method="POST">
+              {% csrf_token %}
+              <input type="submit" value="Aceptar">
+              <input type="text" value="{{activos}}" name="activo" style="visibility: hidden;">
+              <input type="text" value="{{solisitud.FROM_usuario.id}}" name="visitado" style="visibility: hidden;">
+              <input type="text" value="Aceptar" name="solicitud" style="visibility: hidden;"> 
+            </form>
+            <span><form action="ProcesarSolicitud" method="POST">
+              {% csrf_token %}
+                <input type="submit" value="REchazar"> 
+                <input type="text" value="{{activos}}" name="activo" style="visibility: hidden;">
+              <input type="text" value="{{solisitud.FROM_usuario.id}}" name="visitado" style="visibility: hidden;">
+              <input type="text" value="Rechazar" name="solicitud" style="visibility: hidden;">
+            
+            </form></span> 
+            
+          </h2>
+
+         
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+<br>--> 
+<h3  style="color: white; margin: 0%; text-align: center; padding-bottom: 2%;"  ><span id='postear' style="border-radius: 3px ;background-color: teal;padding-top: 0.5% ; padding-left: 1%; padding-right: 1%;">Agregar Post {{dato}}</span> </h3>
+   
+ 
+  <form action="Inicio" id="posteo" method="POST" style="text-align: center;" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <input type="text" name="activos" value="{{activos}}" style="font-size: 0px ;visibility: hidden;">
+      <table style="color: white; margin: 20px auto;">{{Formulario.as_table}}</table>
+      <select name="Author" required id="id_Author" style="font-size: 0px ;visibility: hidden;">
+        <option value="{{Author.id}}">---------</option>
+        <option value="{{Author.id}}">Verificar</option>
+      
+      </select>
+      <input type="submit" value="Publicar post" style="width: 150px;">
+      
+  </form>
+
+{% for post in Posts %}
+
+    <div class="container">
+        <div style="background-color: palegreen ; border: black; border-radius: 5px ;">
+          <div style="padding-left: 10%; padding-right: 10%; padding-top: 2%; border: black; border-width: 20px;">
+            <span >
+              {% if post.Author.Foto %}
+
+                <img  style="border: black; border-radius: 20px ;width: 5%;" src="{{post.Author.Foto.url}}" alt="as_table" >
+              {% else %}
+        
+                <img   style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 10%;" src="media/Posts/bg_main.jpg" alt="as_table" >
+              {% endif %}
+            </span>  
+            <span class="section-heading-upper" style="font-size: 200% ;text-align: left; font-family: cursive;">
+              <a href="visita/{{post.Author.id}}">{{post.Author.usuario.username}}</a>
+            </span>
+      
+            <div align="center"; style="padding-top: 2%; padding-bottom: 2%; background-color: aqua;border-radius: 20px ;" >
+              <div align="left"; style="padding-left: 1%; ;background-color:mediumseagreen; width: 97%; border-radius: 10px;">
+                <span class="section-heading-upper" style="color: crimson; text-align: left; font-family:cursive; ">{{post.Nombre}}</span><br>
+                <span class="section-heading-upper" style=" color: black;text-align: left; background-color:mediumseagreen;">{{post.Descripcion}}</span><br>
+            
+              </div>
+              
+            
+            
+              <div align="center"; style="border: black; ">
+                <img   style="border: black; border-radius: 20px ;width: 97%;" src="{{post.Foto.url}}" alt="as_table" >
+              </div>
+          
+            </div>
+            
+              <form method="POST" action="me_gusta">
+              {% csrf_token %}
+              <input type="text" value="{{post.id}}" name="postid" style="font-size: 0px;visibility: hidden;">
+              {% if post in postslikeados  %}   <!--Recibimos y trabajamos con likes del activo, arreglo de posts likesados-->
+              <input type="text" value="0" name="valor" style="font-size: 0px;visibility: hidden;">
+              <div >
+              <input type="submit" style="align-items: flex-end ;font-family:cursive; color: blue; border-radius: 10px; text-align: right;" value="Me gusta">
+            </div>
+              {% else %}
+              <input type="text" value="1" name="valor" style="font-size: 0px;visibility: hidden;">
+              <div >
+                <input type="submit" style=" font-family: fantasy; border-radius: 10px; text-align: right;" value="Me gusta" >
+              </div>
+              {% endif %}
+              
+              </form>
+              <span style="font-weight: 500;">Likes: {{post.me_gustas}}</span><br>
+          
+            <span id='C{{post.id}}' style="font: size 0.5em;;">Comentarios </span><br>
+            <div id='A{{post.id}}'>
+            {% for comentario in comentarios %} 
+            
+            {% ifequal comentario.Post  post %}
+            
+            {{comentario.Author}}: <span class="section-heading-upper">{{comentario.Coment}}</span><br>
+              {% endifequal %}
+              {% endfor %}
+            </div>
+              
+            <span id="D{{post.id}}">Comentar</span>
+
+            <div style="padding-block-end: 1%;">
+              <form action="Comentario" method="POST" id="E{{post.id}}">
+              {% csrf_token %}
+                <input type="text" name="texto">
+              <input type="submit" value="Enviar Comentario"> 
+              <input type="text" value="{{post.id}}" name="postId" style=" font-size: 0px;visibility: hidden; ">
+              <input type="text" value="{{activos}}" name="activos" style="font-size: 0px;visibility: hidden;">
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <br>
+
+  {% endfor %}
+
+</div>
+
+{% endblock %}

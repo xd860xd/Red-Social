@@ -1,0 +1,39 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+<script></script>
+<div class="wrapper">
+  
+  {% for amigo, value in amigos.items %}
+  <br><br>
+    <div class="container">
+      <div >
+        
+       <div class="intro-text left-0 text-center bg-faded p-5 rounded">  
+        <h2 >
+            {% if amigo.Amigo1.Foto %}
+    
+              <img align="center" style="border: black; border-radius: 20px ; width: 20%;" src="{{amigo.Amigo1.Foto.url}}"  >
+            {% else %}
+            {{notificacion.de.Usuarios.all}}
+              <img   style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 10%;" src="media/Posts/bg_main.jpg"  >
+            {% endif %}
+            <span class="section-heading-lower"><a href="visita/{{amigo.Amigo1.id}}">{{amigo.Amigo1.usuario.username}}</a></span><br>
+            <span>Mensajes entrantes: {{value}}</span>
+          </h2>  
+          <form action="conversacion" method="POST">
+            {% csrf_token %}
+            <input type="text" value="{{activos}}" name="activos" style="visibility: hidden; font-size: 0px;">
+            <input type="text" value="{{amigo.Amigo1.id}}" name="visitado" style="visibility: hidden; font-size: 0px;">
+            <input type="submit" value="Abrir conversacion"> 
+          </form>
+            
+          
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>  
+  {% endblock %}

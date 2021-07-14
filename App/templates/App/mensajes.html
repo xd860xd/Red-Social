@@ -1,0 +1,93 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="wrapper">
+   <br>   
+   <div align="center">
+   <textarea align='center' id="chat-log" cols="100" rows="20"></textarea><br>
+   <input id="chat-message-input" type="text" size="100"><br>
+   <input id="chat-message-submit" type="button" value="Send">
+  </div>
+   {{ room_name|json_script:"room-name" }}
+   <script>
+       const roomName = JSON.parse(document.getElementById('room-name').textContent);
+       const usuario = '{{usuario}}';
+       const visitado= '{{visitado}}';
+       
+       const chatSocket = new WebSocket(
+           'ws://'
+           + window.location.host
+           + '/ws/chat/'
+           + roomName
+           + '/'
+       );
+
+       chatSocket.onmessage = function(e) {
+           const data = JSON.parse(e.data);
+           document.querySelector('#chat-log').value += (data.message + '\n');
+       };
+       chatSocket.onclose = function(e) {
+           console.error('Chat socket closed unexpectedly');
+       };
+
+       document.querySelector('#chat-message-input').focus();
+       document.querySelector('#chat-message-input').onkeyup = function(e) {
+           if (e.keyCode === 13) {  // enter, return
+               document.querySelector('#chat-message-submit').click();
+           }
+       };
+
+       document.querySelector('#chat-message-submit').onclick = function(e) {
+           const messageInputDom = document.querySelector('#chat-message-input');
+           const message = messageInputDom.value; //ES este el valor del input
+           
+           chatSocket.send(JSON.stringify({
+               'message': message,
+               'usuario': usuario,
+               'visitado': visitado
+           }));
+           messageInputDom.value = '';
+       };
+   </script>
+  
+    <form action="conversacion" method="POST">
+      {% csrf_token %}
+      <input type="text" value="{{activos}}" name="activos" style="visibility: hidden;">
+      <input type="text" value="{{visitado}}" name="visitado" style="visibility: hidden;">
+      <input type="text" name="texto">
+      <input type="submit" value="Enviar mensaje"> 
+    </form>
+    
+    <!--- {% for mensaje in mensajes %}
+        
+      <div class="container"  {% ifequal mensaje.FROM_usuario.usuario request.user %} align="right" {% endifequal %}>
+    
+         
+            <div style="background: aqua; border-radius: 10px; border: black; " >
+              {% if mensaje.FROM_usuario.Foto %}
+              <img style="vertical-align: text-bottom; width: 10%; border-radius: 10px;" src="{{mensaje.FROM_usuario.Foto.url}}" alt="">
+              {% else %}
+              <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{{post.Foto.url}}" alt=""style="vertical-align: text-bottom; width: 10%; border-radius: 10px;">
+              {% endif %}
+              
+                <span style="font-size: 150%; padding-left: 10px; padding-right: 10px;" >{{mensaje.FROM_usuario.usuario.username}}</span><br>
+              
+                <span style="padding-left: 10px; padding-right: 10px;">{{mensaje.Mensaje}}</span><br>
+              
+            </div>  
+        <br>
+      </div> 
+       
+    {% endfor %}--->
+ 
+   <!-- <form action="conversacion" method="POST">
+      {% csrf_token %}
+      <input type="text" value="{{activos}}" name="activos" style="visibility: hidden;">
+      <input type="text" value="{{visitado}}" name="visitado" style="visibility: hidden;">
+      <input type="text" name="texto">
+      <input type="submit" value="Enviar mensaje"> 
+    </form>
+  -->
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'App/base copy.html' %}
+
+{% load static %}
+{% block content %}
+
+
+
+<div class="contenedorFormulario">
+<h3 style="color: white;">Iniciar Sesion {{dato}}
+      
+    <form action="Inicio" method="POST" style="text-align: center;">
+        {% csrf_token %}
+        <table style="color: white; margin: 20px auto;">{{miFormulario.as_table}}</table>
+        <input type="text" style="visibility: hidden;" name="pase" value="pase">
+        <input type="submit" value="Ingresar" style="width: 150px;"></div>
+        
+    </form>
+
+<br>
+    <div class="contenedorFormulario">
+        <h3 style="color: white;">Registrarse {{dato}}
+              
+            <form action="RegistrarUsuario" method="POST" style="text-align: center;">
+                {% csrf_token %}
+                <table style="color: white; margin: 20px auto;">{{miFormulari}}</table>
+                <input type="submit" value="Registrarse" style="width: 150px;"></div>
+                
+            </form>    
+
+
+
+   <!-- Heading --> 
+   <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'Appp/img/principal.jpg' %}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Encuentra todo para realizar la fiesta de tus sueños</span>
+            <span class="section-heading-lower">La mejor opcion Pa'Armar el pachangon</span>
+          </h2>
+          <p class="mb-3">Tenemos desde taquitos hasta papitas, todo tipo de antogitos mexicanos.
+          </p>
+         
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  
+    <!-- Message -->
+    <section class="page-section cta">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper">Compromiso total</span>
+                <span class="section-heading-lower">Garantizado</span>
+              </h2>
+              <p class="mb-0">Con más de 75 años de experiencia a nuestras espaldas, desde Gestión de Pedidos tenemos los conocimientos y herramientas necesarios para llevar cualquier objeto a la puerta de su casa con puntualidad y profesionalidad.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

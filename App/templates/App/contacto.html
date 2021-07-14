@@ -1,0 +1,27 @@
+{% extends 'App/base copy.html' %}
+
+{% load static %}
+{% block content %}
+
+<div class="contenedorFormulario">
+<h3 style="color: white;"><!--Iniciar Sesion {{dato}}
+      
+    <form action="Inicio" method="POST" style="text-align: center;">
+        {% csrf_token %}
+        <table style="color: white; margin: 20px auto;">{{miFormulario.as_table}}</table>
+        <input type="text" style="visibility: hidden;" name="pase" value="pase">
+        <input type="submit" value="Ingresar" style="width: 150px;"></div>
+        
+    </form>-->
+
+<br>
+    <div class="contenedorFormulario">
+        <h3 style="color: white;">Registrarse {{dato}}
+              
+            <form action="RegistrarUsuario" method="POST" style="text-align: center;">
+                {% csrf_token %}
+                <table style="color: white; margin: 20px auto;">{{miFormulari}}</table>
+                <input type="submit" value="Registrarse" style="width: 150px;"></div>
+                
+            </form>    
+{% endblock %}
