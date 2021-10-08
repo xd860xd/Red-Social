@@ -1,0 +1,254 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+<script>
+  var z = '{{como}}';
+  p = '{{Posts.1}}';
+
+
+
+  $(document).ready(function () {
+    var posts_id_text = '{{como}}';
+    var cad = [];
+    var cad1 = [];
+    var cad2 = [];
+    var cad3 = [];
+    var z = 0;
+    var j = 0;
+    var d = 0;
+
+    function transform_text_to_array(tex) {
+      console.log(tex)
+      tex = tex.replace(/&gt/g, '');
+      tex = tex.replace(/&lt;Posts: /g, '');
+      tex = tex.replace(/&lt;Posts:/g, '');
+      tex = tex.replace(/;Posts:/g, '');
+      tex = tex.replace(/&lt/g, '');
+      tex = tex.replace(/]/g, '');
+      tex = tex.replace(/;/g, '');
+      tex = tex.replace('[', '');
+      array_post_id = tex.split(', ');
+
+      console.log(typeof (tex))
+      return array_post_id
+    }
+
+    tex = transform_text_to_array(posts_id_text)
+    //console.log(typeof(tratar_text(tex)))
+    for (i in tex) {
+
+      cad.push("#A" + tex[i]);
+      cad1.push("#C" + tex[i]);
+      cad2.push('#D' + tex[i]);
+      cad3.push('#E' + tex[i]);
+      //alert(cad[i]);
+    }
+    for (let i = 0; i < tex.length; i++) {
+      $(cad[i]).hide();
+      $(cad1[i]).click(function () {
+        if (z == 0) {
+          $(cad[i]).show();
+          z += 1;
+        }
+        else {
+          $(cad[i]).hide();
+          z = 0;
+        }
+      });
+
+      $(cad3[i]).hide();
+      $(cad2[i]).click(function () {
+        if (j == 0) {
+          $(cad3[i]).show();
+          j += 1;
+        }
+        else {
+          $(cad3[i]).hide();
+          j = 0;
+        }
+
+      });
+    }
+    $('#posteo').hide()
+    $('#postear').click(function () {
+
+      if (d == 0) {
+        $('#posteo').show();
+        d = 1;
+      } else {
+        $('#posteo').hide();
+        d = 0;
+      }
+
+    });
+
+  });
+
+</script>
+
+<div class="wrapper">
+  <br>
+
+  <!--
+{% for solisitud in solisitudes %}
+<section class="page-section clearfix" >
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{{post.Foto.url}}" alt=""style="width:50%;"">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-lower">{{solisitud.FROM_usuario}}</span>
+            <form action="ProcesarSolicitud" method="POST">
+              {% csrf_token %}
+              <input type="submit" value="Aceptar">
+              <input type="text" value="{{activos}}" name="activo" style="visibility: hidden;">
+              <input type="text" value="{{solisitud.FROM_usuario.id}}" name="visitado" style="visibility: hidden;">
+              <input type="text" value="Aceptar" name="solicitud" style="visibility: hidden;"> 
+            </form>
+            <span><form action="ProcesarSolicitud" method="POST">
+              {% csrf_token %}
+                <input type="submit" value="REchazar"> 
+                <input type="text" value="{{activos}}" name="activo" style="visibility: hidden;">
+              <input type="text" value="{{solisitud.FROM_usuario.id}}" name="visitado" style="visibility: hidden;">
+              <input type="text" value="Rechazar" name="solicitud" style="visibility: hidden;">
+            
+            </form></span> 
+            
+          </h2>
+
+         
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endfor %}
+<br>-->
+  <h3 style="color: white; margin: 0%; text-align: center; padding-bottom: 2%;"><span id='postear'
+      style="border-radius: 3px ;background-color: teal;padding-top: 0.5% ; padding-left: 1%; padding-right: 1%; cursor: pointer">Agregar
+      Post {{dato}}</span> </h3>
+
+
+  <form action="Inicio" id="posteo" method="POST" style="text-align: center;" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <input type="text" name="activos" value="{{activos}}" style="font-size: 0px ;visibility: hidden;">
+    <input type="text" name="Author" value="{{Author}}" style="font-size: 0px ;visibility: hidden;">
+
+    <table style="color: white; margin: 20px auto;">{{Formulario.as_table}}</table>
+    {% comment %} <select name="Author" required id="id_Author" style="font-size: 0px ;visibility: hidden;">
+      <option value="{{Author.id}}" select=true>---------</option>
+
+    </select> {% endcomment %}
+    <input type="submit" value="Publicar post" style="width: 150px;  cursor :pointer">
+
+  </form>
+
+  {% for post in Posts %}
+
+  <div class="container">
+    <div style="background-color: palegreen ; border: black; border-radius: 5px ;">
+      <div style="padding-left: 10%; padding-right: 10%; padding-top: 2%; border: black; border-width: 20px;">
+        <span>
+          {% if post.Author.Foto %}
+
+          <img style="border: black; border-radius: 20px ;width: 5%;" src="{{post.Author.Foto.url}}" alt="as_table">
+          
+          {% elif post.Author.usuario.username == "edward"%}
+          <img style="border: black; border-radius: 20px ;width: 10%;" src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg" alt="as_table">
+          
+
+          {% else %}
+      
+          <img style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 10%;"
+            src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6" alt="as_table">
+          {% endif %}
+        </span>
+        <span class="section-heading-upper" style="font-size: 200% ;text-align: left; font-family: cursive;">
+          <a href="visita/{{post.Author.id}}">{{post.Author.usuario.username}}</a>
+        </span>
+
+        <div align="center" ; style="padding-top: 2%; padding-bottom: 2%; background-color: aqua;border-radius: 20px ;">
+          <div align="left" ;
+            style="padding-left: 1%; ;background-color:mediumseagreen; width: 97%; border-radius: 10px;">
+            <span class="section-heading-upper"
+              style="color: crimson; text-align: left; font-family:cursive; ">{{post.Nombre}}</span><br>
+            <span class="section-heading-upper"
+              style=" color: black;text-align: left; background-color:mediumseagreen;">{{post.Descripcion}}</span><br>
+
+          </div>
+          {% if post.Author.usuario.username == "edward"%}
+          <div align="center" ; style="border: black; ">
+            <img style="border: black; border-radius: 20px ;width: 97%;" 
+              src="https://1.bp.blogspot.com/-VWxJTNksD3A/XbcU4fi4bOI/AAAAAAAAAkU/Cac_eCUXkjUOrMkvppCcL_MLADpsQ7gpACEwYBhgL/s1600/WELCOME-ST-IVES.jpg"
+            
+             alt="as_table">
+          </div>
+          {% else %}
+
+          <div align="center" ; style="border: black; ">
+            <img style="border: black; border-radius: 20px ;width: 97%;" src="{{post.Foto.url}}" alt="as_table">
+          </div>
+
+          {% endif %}
+          
+
+        </div>
+
+        <form method="POST" action="me_gusta">
+          {% csrf_token %}
+          <input type="text" value="{{post.id}}" name="postid" style="font-size: 0px;visibility: hidden;">
+          {% if post in postslikeados %}
+          <!--Recibimos y trabajamos con likes del activo, arreglo de posts likesados-->
+          <input type="text" value="0" name="valor" style="font-size: 0px;visibility: hidden;">
+          <div>
+            <input type="submit"
+              style="align-items: flex-end ;font-family:cursive; color: blue; border-radius: 10px; text-align: right;"
+              value="Me gusta">
+          </div>
+          {% else %}
+          <input type="text" value="1" name="valor" style="font-size: 0px;visibility: hidden;">
+          <div>
+            <input type="submit" style=" font-family: fantasy; border-radius: 10px; text-align: right;"
+              value="Me gusta">
+          </div>
+          {% endif %}
+
+        </form>
+        <span style="font-weight: 500;">Likes: {{post.me_gustas}}</span><br>
+
+        <span id='C{{post.id}}' style="font: size 0.5em; background-color : aqua; cursor : pointer; border-radius : 5px;">Comentarios </span><br>
+        <div id='A{{post.id}}'>
+          {% for comentario in comentarios %}
+
+          {% ifequal comentario.Post post %}
+
+          {{comentario.Author}}: <span class="section-heading-upper">{{comentario.Coment}}</span><br>
+          {% endifequal %}
+          {% endfor %}
+        </div>
+
+        <span id="D{{post.id}}" class="shadow  rounded"
+        style="background-color : aqua; cursor : pointer ; box-shadow: 2px black">Comentar</span>
+
+        <div style="padding-block-end: 1%;">
+          <form action="Comentario" method="POST" id="E{{post.id}}">
+            {% csrf_token %}
+            <input type="text" name="texto">
+            <input type="submit" value="Enviar Comentario">
+            <input type="text" value="{{post.id}}" name="postId" style=" font-size: 0px;visibility: hidden; ">
+            <input type="text" value="{{activos}}" name="activos" style="font-size: 0px;visibility: hidden;">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  {% endfor %}
+
+</div>
+
+{% endblock %}

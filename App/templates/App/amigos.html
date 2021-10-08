@@ -1,0 +1,47 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+<script></script>
+<div class="wrapper">
+  
+  {% for amigo, value in amigos.items %}
+  <br><br>
+    <div class="container">
+      <div >
+        
+       <div class="intro-text left-0 text-center bg-faded p-5 rounded">  
+        <h2 >
+            {% if amigo.Amigo1.Foto %}
+    
+              <img align="center" style="border: black; border-radius: 20px ; width: 20%;" src="{{amigo.Amigo1.Foto.url}}"  >
+            
+             {% elif amigo.Amigo1.usuario.username == "edward"%}
+       <img id="foto"  style="border: black; border-radius: 20px ; width: 20%;" class="foto2" 
+        src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg" >
+       
+            
+            
+            {% else %}
+            {{notificacion.de.Usuarios.all}}
+              <img   style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 10%;" 
+             src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6"    >
+            {% endif %}
+
+
+            <span class="section-heading-lower"><a href="visita/{{amigo.Amigo1.id}}">{{amigo.Amigo1.usuario.username}}</a></span><br>
+            <span>Mensajes entrantes: {{value}}</span>
+          </h2>  
+          <form action="conversacion" method="GET">
+            <input type="text" value="{{amigo.Amigo1.id}}" name="visitado" style="visibility: hidden; font-size: 0px;">
+            <input type="submit" value="Abrir conversacion"> 
+          </form>
+            
+          
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>  
+  {% endblock %}

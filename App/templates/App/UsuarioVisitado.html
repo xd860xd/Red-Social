@@ -1,0 +1,53 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+
+   <!-- Heading -->
+  
+   {% for post in Usuarios %}
+     <section class="page-section clearfix">
+    <div class="container">
+   
+       
+       <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+        {% if post.Foto %}
+         <img id="foto" style="width: 15%;" class="foto2"  src="{{perfil.Foto.url}}" >
+          {% elif post.usuario.username == "edward"%}
+       <img id="foto" style="width: 15%;" class="foto2"  src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg" >
+         
+       {% else %}
+         <img id="foto" style="width: 15%;" class="foto2" src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6"  >
+          {% endif %}
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-lower">{{post.usuario.username}}</span>
+            <span class="section-heading-upper">{{post.Descripcion}}</span>
+
+          <form method="POST" action="../{{accion}}Solicitud">
+            {% csrf_token %}
+            <input type="text" name="activo" value="{{activos}}" style="visibility: hidden;"><!-- ID_ACTIVO -->
+            <input type="text" name="visitado" value="{{post.id}}" style="visibility: hidden;"> 
+            <input type="text" name="pass" value="1" style="visibility: hidden;"> 
+            <input type="text" name="funcion" value="{{accion}}" style="visibility: hidden;"> 
+            <button type="submit" >{{sol}}</button>
+        </form>
+
+
+          <div style="text-align: left; font-size: 0.8em;">
+            <!--Negocio: <a href='{{Banquet.0}}{{Banquetess.Negocio}}'>{{Banquetess.Negocio}}</a> 
+            -->
+        </div>
+        </div>
+      
+    </div>
+  </section>
+
+  {% endfor %}
+
+
+
+  
+
+{% endblock %}

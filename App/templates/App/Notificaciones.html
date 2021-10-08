@@ -1,0 +1,142 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+<script></script>
+
+<br>  <br>
+
+
+<div class="wrapper">
+
+{% if notificaciones %}
+
+{% else %}
+  <div class="justify-content-center d-flex m-1">
+    <div class="container">
+    <br>  <br><br>  <br><br>  <br><br>  
+        <div style="background-color: palegreen ; border: black; border-radius: 5px ;">
+        
+          <div style="padding-left: 10%; padding-right: 10%; padding-top: 2%; border: black; border-width: 20px;">
+          
+    
+            <div class="p-3 justify-content-center d-flex m-1">
+              HO!! No Hay notificaciones
+            </div>
+            
+          </div>  
+      </div>
+    </div>
+    
+  </div>
+{% endif %}
+
+{% for notificacion in notificaciones %}
+
+
+    <div class="container">
+      <div style="background-color: palegreen ; border: black; border-radius: 5px ;">
+        <div style="padding-left: 10%; padding-right: 10%; padding-top: 2%; border: black; border-width: 20px;">
+          
+        
+            <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+              <div style="text-align: left;">
+                <span class="container" style="padding-right: 27%;">
+                  {% if notificacion.de.usuarios.all.0.Foto %}
+      
+                    <img align="center" style="border: black; border-radius: 20px ; width: 20%;" src="{{notificacion.de.usuarios.all.0.Foto.url}}"  >
+                
+                {% elif mensaje.FROM_usuario.usuario.username == "edward"%}
+                  <img align="center" style="border: black; border-radius: 20px ; width: 20%;"
+                    src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg"  alt="">
+                
+                
+                  {% else %}
+                  {{notificacion.de.Usuarios.all}}
+                    <img   style="vertical-align: text-bottom; border: black; border-radius: 50% ;width: 10%;" 
+                    src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6"    
+            
+                    >
+                  {% endif %}
+
+
+                
+
+
+                  <span class="section-heading-lower">{{notificacion.de.usuario.username}}</span>.
+                
+                        
+                <h6 class="section-heading-lower" style="padding-left: 20px;">{{notificacion.notificacion}}</h6>
+                <span style="font-size: 70%; padding-left: 20px;">{{notificacion.fecha}}
+                <span class="container" style="padding-right: 27%;vertical-align: text-bottom;">
+                <!-- {% if notificacion.post.Foto %}
+      
+                    <img  style="vertical-align: text-bottom ;border: black; border-radius: 20px ; width: 20%;" src="{{notificacion.post.Foto.url}}"  >
+                  {% else %}
+            
+                    <img   style="vertical-align: text-bottom ; border: black; border-radius: 50% ;width: 10%;" src="media/Posts/bg_main.jpg"  >
+                  {% endif %}
+              -->
+                </span>
+              </span>
+              </span>
+              
+            
+              <span class="container" style="padding-right: 27%;">
+                {% ifequal notificacion.solicitud Null %}
+                
+                  <form action="Ver_Notificacion" method="POST" style="vertical-align: text-bottom;">
+                    {% csrf_token %}
+                      <input type="text" value="{{notificacion.id}}" name="notificacion" style="font-size: 0px;visibility: hidden;">
+                      <input type="text" value="ver" name="funcion" style="visibility: hidden; font-size: 0px;">
+                      
+                    <input type="submit" value="Ver notificacion" > 
+                  </form>
+                  <form action="Eliminar_Notificacion" method="POST">
+                      {% csrf_token %}
+                        <input type="text" value="{{notificacion.id}}" name="notificacion" style="visibility: hidden; font-size: 0px;">
+                        <input type="text" value="eliminar" name="funcion" style="visibility: hidden; font-size: 0px;">
+                        
+                      <input type="submit" value="Elimiar notificacion" > 
+                    </form>
+                  
+                {% else %}
+                  <div>
+                    <form action="ProcesarSolicitud" method="POST">
+                      {% csrf_token %}
+                        <input type="submit" value="Aceptar solicitud de amistad" > 
+                        <input type="text" name="notificacion" style=" font-size: 0px; visibility: hidden;" value="{{notificacion.de.id}}" >
+                        <input type="text" name="visitado" style="font-size: 0px;visibility: hidden;" value="{{notificacion.de.id}}" >
+                        <input type="text" value="Aceptar" name="solicitud" style="font-size: 0px;visibility: hidden;">
+                      
+                    </form>
+                  </div>  
+                  <div>
+                    <form action="ProcesarSolicitud" method="POST">
+                        {% csrf_token %}
+                          <input type="submit" value="Rechazar solicitud" > 
+                            <input type="text" name="notificacion" style="font-size: 0px;visibility: hidden;" value="{{notificacion.de.id}}" >
+                            <input type="text" name="visitado" style="font-size: 0px;visibility: hidden;" value="{{notificacion.de.id}}" >
+                            <input type="text" value="Rechazar" name="solicitud" style="font-size: 0px;visibility: hidden;">
+                    
+                    </form>
+                  </div>  
+                  
+                {% endifequal %}
+              
+                </span> 
+              
+                
+              
+            </div>
+
+        </div>  
+      </div>
+    </div>
+    <br>
+ 
+{% endfor %}
+<br>
+</div> 
+  {% endblock %}

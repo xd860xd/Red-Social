@@ -1,0 +1,128 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+{% block content %}
+<div class="container">
+
+  {% comment %} <div class="row">
+
+    <div class="col-md-12 search">
+
+      <form action="../buscar" method="POST">
+       {% csrf_token %}
+        <div id="custom-search-input">
+
+          <div class="input-group col-md-12">
+            <input type="text" name="activo" value="{{activos}}" style="visibility: hidden;">
+           
+           
+            <input type="text" class="form-control" placeholder="Buscar..." name="buscar">
+            
+            <span class="input-group-list">
+
+              <i class="icon icon-search"></i>
+              <button type="submit" class="boton btn-success">Buscar</button>
+
+            </span>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div> {% endcomment %}
+
+</div>
+
+
+   <!-- Heading -->
+  
+ 
+     <section class="page-section clearfix">
+    <div class="container">
+   
+      <div class="intro"> <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'Appp/img/principal.jpg' %}" alt="">
+       
+       <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-lower">{{usuario.Nombre_Usuario}}</span>
+            <span class="section-heading-upper">{{usuario.Descripcion}}</span>
+            
+          <form method="POST" action="../ProcesarSolicitud">
+            {% csrf_token %}
+         
+            <input type="text" name="activo" value="{{activos}}" style="visibility: hidden;">
+            <input type="text" name="visitado" value="{{usuario.id}}" style="visibility: hidden;"> 
+            <input type="text" name="devisita" value="1" style="visibility: hidden;"> 
+            <input type="text" name='solicitud' value="Aceptar" style="visibility: hidden;">
+            
+            <button type="submit" >Aceptar solicitud de amistad</button>
+        </form>
+        
+        <form method="POST" action="../ProcesarSolicitud">
+          {% csrf_token %}
+            
+          <input type="text" name="activo" value="{{activos}}" style="visibility: hidden;">
+          <input type="text" name="visitado" value="{{usuario.id}}" style="visibility: hidden;"> 
+          <input type="text" name="devisita" value="1" style="visibility: hidden;"> 
+          <input type="text" name='solicitud' value="Rechazar" style="visibility: hidden;">
+            
+          <button type="submit" >Rechazar solicitud de amistad</button>
+      </form>
+
+
+          <div style="text-align: left; font-size: 0.8em;">
+            <!--Negocio: <a href='{{Banquet.0}}{{Banquetess.Negocio}}'>{{Banquetess.Negocio}}</a> 
+            -->
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+
+   <section class="page-section clearfix">
+    <div class="container">
+      <div class="intro">
+        <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{% static 'Appp/img/principal.jpg' %}" alt="">
+        <div class="intro-text left-0 text-center bg-faded p-5 rounded">
+          <h2 class="section-heading mb-4" >
+            <span class="section-heading-upper">Encuentra todo para realizar la fiesta de tus sueños</span>
+            <span class="section-heading-lower">La mejor opcion Pa'Armar el pachangon</span>
+          </h2>
+          <p class="mb-3">Tenemos desde taquitos hasta papitas, todo tipo de antogitos mexicanos.
+          </p>
+         
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  
+    <!-- Message -->
+    <section class="page-section cta">
+      <div class="container">
+        <div class="row">
+          <div class="col-xl-9 mx-auto">
+            <div class="cta-inner text-center rounded">
+              <h2 class="section-heading mb-4">
+                <span class="section-heading-upper">Compromiso total</span>
+                <span class="section-heading-lower">Garantizado</span>
+              </h2>
+              <p class="mb-0">Con más de 75 años de experiencia a nuestras espaldas, desde Alquilacion de salones tenemos los conocimientos y herramientas necesarios para ofrecer apmlia variedad de servicios con puntualidad y profesionalidad.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

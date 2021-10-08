@@ -1,0 +1,161 @@
+{% extends 'App/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<script src="{% static 'App/vendor/jquery/jquery-3.6.0.js' %}"></script>
+   <!--473 134 3654-->
+<script>
+  var z = '{{como}}'  //como es un array de id_s de los posts pasado      
+  $(document).ready(function() {
+    var tex= '{{post.id}}';
+    var cad=[];
+    var cad1=[];
+    var cad2=[];
+    var cad3=[];
+    var a=0;
+    var w=0;
+    var u=0;
+    tex=tex.replace(/&gt/g,'');tex=tex.replace(/&lt;Posts: /g,'');tex=tex.replace(/&lt;Posts:/g,'');tex=tex.replace(/;Posts:/g,'');tex=tex.replace(/&lt/g,'');tex=tex.replace(/]/g,'');tex=tex.replace(/;/g,'');tex=tex.replace( '[' ,'');tex=tex.split(', ');
+    
+    for (i in tex){
+      cad.push("#A" + tex[i]);
+      cad1.push("#C" + tex[i]);
+      cad2.push("#E" + tex[i]);
+      cad3.push("#D" + tex[i]);
+      //alert(cad[i]);
+    }
+    for (let i=0; i< tex.length;i++) {
+      $(cad[i]).hide();
+      
+      $(cad1[i]).click(function () {
+        if (w==0){
+        $(cad[i]).show(); 
+        w=1;
+        }
+        else{
+        $(cad[i]).hide(); 
+        w=0;
+        }
+      });
+
+      $(cad2[i]).hide();
+      
+      $(cad3[i]).click(function () {
+        if (u==0){
+        $(cad2[i]).show(); 
+        u=1;
+        }
+        else{
+        $(cad2[i]).hide(); 
+        u=0;
+        }
+      });
+           
+    }
+   
+    $('#cambiar').hide()
+    $('#fota').hide();
+    $('#foto').click(function () {
+      $(this).hide();
+      if (a==0){
+        
+        $('#fota').show();
+        $('#cambiar').show()
+        a=1;
+     }
+      
+    });
+    $('#fota').click(function () {
+      $(this).hide();
+      $('#cambiar').hide()
+      $('#formu').hide()
+      $('#foto').show();
+        a=0;
+      
+    })
+    
+
+    $('#formu').hide();
+    $('#cambiar').click(function () {
+      
+      $('#formu').show();
+        
+      
+    })
+  
+  });
+
+  </script>
+  <style>
+    .foto2{
+      max-width: 63%;
+      height: auto;
+      border: black; 
+    }
+    .foto1{
+      position: fixed relative ;
+      padding-bottom: 10%;
+      align-self: center;
+      max-width: 100%;
+      height: auto;
+      border: black; 
+    }
+
+  </style>
+
+
+<section class="page-section clearfix">
+  <div class="container">
+    <div class="intro"> <img class="intro-img img-fluid mb-3 mb-lg-0 rounded" src="{{post.Foto.url}}" alt="">
+     
+
+      <div class="intro-text left-0  bg-faded p-5 rounded">
+        <span class="section-heading-upper" style="text-align: left; font-family: cursive;">{{post.Author.username}}</span><br>
+        <span class="section-heading-upper" style="color:yellow; text-align: left; font-family:sans-serif;">{{post.Nombre}}</span><br>
+        <span class="section-heading-upper" style=" text-align: left;">{{post.Descripcion}}</span><br>
+
+      
+        <span>Likes: {{post.me_gustas}}</span>
+      
+        <form method="POST" action="../me_gusta">
+        {% csrf_token %}
+        <input type="text" value="{{post.id}}" name="postid" style="visibility: hidden;">
+        {% if post in postslikeados  %}   <!--Recibimos y trabajamos con likes del activo, arreglo de posts likesados-->
+        <input type="text" value="0" name="valor" style="visibility: hidden;">
+        <input type="submit" style="font-family:cursive; color: blue;" value="Me gusta">
+        {% else %}
+        <input type="text" value="1" name="valor" style="visibility: hidden;">
+        <input type="submit" style="font-family: fantasy;" value="Me gusta">
+        {% endif %}
+        <input type="number" style="visibility: hidden;" value="{{post.Author.id}}" name="visita"> 
+        <input type="text" value="{{notificacion}}" name="notificacion" style="visibility: hidden;">
+       
+      </form>
+       
+       <div id='C{{post.id}}'>Comentarios</div>
+       <div id='A{{post.id}}'>
+       {% for comentario in comentarios %} 
+       
+       {% ifequal comentario.Post  post %}
+       
+       {{comentario.Author}}: <span class="section-heading-upper">{{comentario.Coment}}</span><br>
+        {% endifequal %}
+        {% endfor %}
+      </div>
+        
+      <span id="D{{post.id}}">Comentar</span>
+        <form action="../Comentario" method="POST" id="E{{post.id}}">
+        {% csrf_token %}
+          <input type="text" name="texto">
+        <input type="submit" value="Enviar Comentario"> 
+        <input type="text" value="{{activos}}" name="activos" style="visibility: hidden;">
+        <input type="text" value="{{post.id}}" name="postId" style="visibility: hidden;">
+        <input type="text" value="{{notificacion}}" name="notificacion" style="visibility: hidden;">
+        </form>
+    </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
