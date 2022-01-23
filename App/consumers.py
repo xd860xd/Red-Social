@@ -4,7 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from Social.models import Mensajes
 from Relaciones.models import Amigos
 from Usuarios.models import Usuarios
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User 
 def Obtener_conversacion(id):
 
     amigos=Amigos.objects.get(id=id)
@@ -76,27 +76,28 @@ from channels.generic.websocket import WebsocketConsumer
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
-
+        
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas")
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         
         print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas")
        
         self.room_group_name = 'chat_%s' % self.room_name
-
+        print(self.channel_layer.group_add)
         # Join room group
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
             self.channel_name
         )
-        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas")
+        print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas")
        
-
+       
         self.accept()
 
         self.send(text_data=json.dumps({
             'message': Obtener_conversacion(self.room_name)
         }))
+        print("Se acepto la conexion")
 
     def disconnect(self, close_code):
         # Leave room group

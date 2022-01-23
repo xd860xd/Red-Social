@@ -48,7 +48,10 @@ class HomeView(View):
           
         formulario=Formulario         
         
-        user=User.objects.get(username=request.user)     
+        user=User.objects.filter(username=request.user).first()
+
+        if not user:
+            user = User.objects.first()
 
         array_posts = self.get_posts(user)
         
