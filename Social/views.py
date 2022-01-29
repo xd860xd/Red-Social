@@ -16,8 +16,9 @@ from Usuarios.models import Usuarios
 from Social.models import Posts, Mensajes, Comentarios, Notificaciones, likes
 from Relaciones.models import Solicitudes, Amigos
 
-
-
+# websockets
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 # Create your views here.
@@ -429,6 +430,24 @@ class ConversationView(View):
                     FROM_usuario= usuario_activo, 
                     TO_usuario = id_usuario_visitado) 
 
+        
+        # Enviar mensaje a websockets
+        channel_layer = get_channel_layer()
+        
+        amistad = self.get_amistad(usuario_activo.id, id_usuario_visitado)
+     
+        async_to_sync(channel_layer.group_send)(
+             'chat_%s' % amistad,
+            {
+                "type": "chat.message",
+                "room_id": amistad,
+                "username": request.user.username,
+                "message": dict({
+                    "message": texto,
+                    "id_usuario": usuario_activo.id
+                }),
+            }
+        )
         return HttpResponseRedirect(f"conversacion?visitado={id_usuario_visitado}&conversation_type=sync")
     
 
@@ -470,15 +489,7 @@ class ConversationView(View):
 
         usuario_activo = request.user.usuario
 
-        amistad_de_usuario=Amigos.objects.get(
-            Amigo1=usuario_activo, 
-            Amigo2=id_usuario_visitado
-            ).id
-        amistad_de_amigo = Amigos.objects.get(
-            Amigo1__id=id_usuario_visitado, 
-            Amigo2=usuario_activo.id
-            ).id
-        amistad = amistad_de_usuario if amistad_de_usuario > amistad_de_amigo else amistad_de_amigo
+        amistad = self.get_amistad(usuario_activo.id, id_usuario_visitado)
         # return render(request, "chat/room.html", {
         #     'id': usuario_activo.id, 
         #     'visitado': id_usuario_visitado,
@@ -523,4 +534,15 @@ class ConversationView(View):
                 )
             )
 
+    def get_amistad(self, usuario_id, amigo_id):
+        amistad_de_usuario=Amigos.objects.get(
+            Amigo1__id=usuario_id, 
+            Amigo2=amigo_id
+            ).id
+        amistad_de_amigo = Amigos.objects.get(
+            Amigo1__id=amigo_id, 
+            Amigo2=usuario_id
+            ).id
+        amistad = amistad_de_usuario if amistad_de_usuario > amistad_de_amigo else amistad_de_amigo
+        return amistad
     
