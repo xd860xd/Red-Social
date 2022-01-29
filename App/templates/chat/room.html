@@ -3,15 +3,22 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Chat Room</title>
+    <title>Red social</title>
 </head>
 <body>
+    <h1>Mensajes con {{visitado}}, {{usuario}}</h1>
+    <!-- *** Pintar los mensajes *** -->
     <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+
+
+    <!-- *** Input para escribir el mensaje *** -->
     <input id="chat-message-input" type="text" size="100"><br>
+    <!-- *** Boton para enviar el mensaje *** -->
     <input id="chat-message-submit" type="button" value="Send">
-    {{ room_name|json_script:"room-name" }}
+
     <script>
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        // *** Inicializar el Socket ***
+        const roomName = '{{amistad}}';
         const usuario = '{{usuario}}';
         const visitado= '{{visitado}}';
         
@@ -23,14 +30,23 @@
             + '/'
         );
 
+        // *** Cuando se reciba un mensaje (Al enviar un mensaje este se pinta en el html hasta que se recive de vuelta) ***
         chatSocket.onmessage = function(e) {
+            // Recibir datos, se requiere saber el mensaje y el usuario
             const data = JSON.parse(e.data);
+            const id_usuario = data.id_usuario
+            const message = data.message
+
+            //Pintar datos
             document.querySelector('#chat-log').value += (data.message + '\n');
         };
+        // *** Si el chatSocket se cierra por algun error o fallo de conexion ***
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
+
+        // *** Capturar evento para enviar mensaje ***
         document.querySelector('#chat-message-input').focus();
         document.querySelector('#chat-message-input').onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
@@ -38,6 +54,7 @@
             }
         };
 
+        // *** Enviar mensaje ***
         document.querySelector('#chat-message-submit').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value; //ES este el valor del input

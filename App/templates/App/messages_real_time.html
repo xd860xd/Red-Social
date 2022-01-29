@@ -1,0 +1,149 @@
+{% extends 'App/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="wrapper">
+   <br>   
+    
+    <div class="" id="messagesContainer">
+      {% for mensaje in mensajes %}
+        
+      <div class="container"  {% ifequal mensaje.FROM_usuario.usuario request.user %} align="right" {% endifequal %}>
+    
+         
+            <div style="background: aqua; border-radius: 10px; border: black; " >
+              {% if mensaje.FROM_usuario.Foto %}
+              <!-- <img style="vertical-align: text-bottom; width: 10%; border-radius: 10px;" src="{{mensaje.FROM_usuario.Foto.url}}" alt=""> -->
+
+               {% elif mensaje.FROM_usuario.usuario.username == "edward"%}
+                <img style="vertical-align: text-bottom; width: 5%; border-radius: 10px;" 
+                src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg"  alt="">
+
+               
+              {% else %}
+              <img class="intro-img img-fluid mb-3 mb-lg-0 rounded"
+  src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6"    
+          
+              alt=""style="vertical-align: text-bottom; width: 5%; border-radius: 10px;">
+
+              {% endif %}
+              
+                <span style="font-size: 150%; padding-left: 10px; padding-right: 10px;" >{{mensaje.FROM_usuario.usuario.username}}</span><br>
+              
+                <span style="padding-left: 10px; padding-right: 10px;">{{mensaje.Mensaje}}</span><br>
+              
+            </div>  
+        <br>
+      </div> 
+       
+    {% endfor %}
+    </div>
+ 
+   <div>
+     
+      <input id="chat-message-input" type="text" name="texto">
+      <input type="submit" value="Enviar mensaje" id="chat-message-submit"> 
+   </div>
+  
+    <script>
+       // Se requieren los objetos usuario, amigo y amistad para poder operar
+      const roomName = '{{amistad}}';
+      const usuario = {}
+      const amigo = {}
+
+      usuario['username'] = '{{usuario.usuario.username}}'
+      usuario['id'] = '{{usuario.id}}'
+      usuario['foto'] = '{{usuario_foto}}'
+     
+      
+      amigo['username'] = '{{amigo.usuario.username}}'
+      amigo['id'] = '{{amigo.id}}'
+      amigo['foto'] = '{{amigo_foto}}'
+      
+      // *** Inicializar el Socket ***
+      const chatSocket = new WebSocket(
+          'ws://'
+          + window.location.host
+          + '/ws/chat/'
+          + roomName
+          + '/'
+      );
+
+      // *** Cuando se reciba un mensaje (Al enviar un mensaje este se pinta en el html hasta que se recive de vuelta) ***
+      chatSocket.onmessage = function(e) {
+          // Recibir datos, se requiere saber el mensaje y el usuario
+          addMessage(e)
+      };
+      // *** Si el chatSocket se cierra por algun error o fallo de conexion ***
+      chatSocket.onclose = function(e) {
+          console.error('Chat socket closed unexpectedly');
+      };
+      // *** Capturar evento para enviar mensaje ***
+      document.querySelector('#chat-message-input').focus();
+      document.querySelector('#chat-message-input').onkeyup = function(e) {
+          if (e.keyCode === 13) {  // enter, return
+              document.querySelector('#chat-message-submit').click();
+          }
+      };
+      // *** Enviar mensaje ***
+      document.querySelector('#chat-message-submit').onclick = function(e) {
+          const messageInputDom = document.querySelector('#chat-message-input');
+          const message = messageInputDom.value; //ES este el valor del input
+          
+          chatSocket.send(JSON.stringify({
+              'message': message,
+              'usuario': usuario.id,
+              'visitado': amigo.id
+          }));
+          messageInputDom.value = '';
+      };
+
+      function addMessage(e){
+         // Recibir datos, se requiere saber el mensaje y el usuario
+          const data = JSON.parse(e.data);
+          const id_usuario = data.message.id_usuario
+          const message = data.message.message
+
+          const isUsarioMessage = (id_usuario == usuario.id); 
+          const position = isUsarioMessage ? 'align="right"' : '';
+
+          const remitent = isUsarioMessage ? usuario : amigo
+          console.log(remitent, usuario, id_usuario,);
+          console.log(data);
+          const photo = getPhoto(remitent)
+
+          document.querySelector("#messagesContainer").innerHTML +=  `
+            <div class="container" ` + position + `>
+              <div style="background: aqua; border-radius: 10px; border: black; " >` + photo + `
+                  <span style="font-size: 150%; padding-left: 10px; padding-right: 10px;" >${remitent.username}</span><br>
+                  <span style="padding-left: 10px; padding-right: 10px;">${message}</span><br>
+              </div>  
+              <br>
+            </div> 
+          `
+
+      }
+      
+      function getPhoto(remitent){
+        let photo = ''
+        if(remitent.foto) {
+            photo = `
+          <img style="vertical-align: text-bottom; width: 10%; border-radius: 10px;" src="${remitent.foto}" alt="">
+          `
+          }
+        else if (remitent.username == "edward"){
+          photo = `<img style="vertical-align: text-bottom; width: 5%; border-radius: 10px;" 
+            src="https://xd860xd.github.io/Portafolio/assets/img/avataaars.svg"  alt="">`
+        }
+        else{
+          photo = `<img class="intro-img img-fluid mb-3 mb-lg-0 rounded"
+    src="https://us.123rf.com/450wm/kritchanut/kritchanut1403/kritchanut140300127/26826364-silueta-del-hombre-an%C3%B3nimo-con-signo-de-interrogaci%C3%B3n.jpg?ver=6" 
+          alt=""style="vertical-align: text-bottom; width: 5%; border-radius: 10px;">`
+        }
+          return photo
+      }
+     
+    </script>
+
+</div>
+{% endblock %}

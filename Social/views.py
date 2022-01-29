@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 #Views & Response
 from django.views import View
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render
 
 #Models
@@ -376,8 +376,7 @@ class MessagesView(View):
     def get(self, request):
         
         user = User.objects.get(username=request.user)
-        
-       
+
         #Enlistamos los amigos para mostrarlos en el template
         usuario=Usuarios.objects.get(usuario = user)
         
@@ -417,21 +416,32 @@ class MessagesView(View):
 @method_decorator(login_required, name='dispatch')
 class ConversationView(View):
 
-    def is_message_in_conversation(self,mensaje, usuario_activo, id_usuario_visitado):
-        return (
-            (
-                str(mensaje.FROM_usuario.id) == str(usuario_activo.id) and 
-                str(mensaje.TO_usuario) == str(id_usuario_visitado)
-                ) 
-                or 
-            (
-                str(mensaje.FROM_usuario.id)==str(id_usuario_visitado) and 
-                str(mensaje.TO_usuario)==str(usuario_activo.id)
-                )
-            )
-  
+    def post(self, request):
 
-    def get(self, request):
+        usuario_activo = request.user.usuario
+
+        id_usuario_visitado=request.POST['visitado']              
+
+        texto = request.POST['texto'] #Es el texto de mnsj
+
+        Mensajes.objects.create(
+                    Mensaje=texto, 
+                    FROM_usuario= usuario_activo, 
+                    TO_usuario = id_usuario_visitado) 
+
+        return HttpResponseRedirect(f"conversacion?visitado={id_usuario_visitado}&conversation_type=sync")
+    
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get("conversation_type") == "async":
+            return self.conversacion_asincronica(request)
+        elif request.GET.get("conversation_type") == "sync":
+            return self.conversacion_sincronica(request)
+        else:
+            return HttpResponseBadRequest({"error": "evie el parametro 'conversation_type' en los parametros GET"})
+
+
+    def conversacion_sincronica(self, request):
 
        
         #user_activo = request.user
@@ -452,20 +462,65 @@ class ConversationView(View):
         messages_of_conversation=messages_of_conversation[-4 : ]
         return render(request, "App/mensajes.html", {'id': usuario_activo.id,'CDN':CDN, 'CDM':CDM,'mensajes':messages_of_conversation, 'visitado': id_usuario_visitado, 'activos': request.user})
 
-
-    def post(self, request):
+    def conversacion_asincronica(self, request):
+       
+        #user_activo = request.user
+    
+        id_usuario_visitado=request.GET['visitado']   
 
         usuario_activo = request.user.usuario
 
-        id_usuario_visitado=request.POST['visitado']              
+        amistad_de_usuario=Amigos.objects.get(
+            Amigo1=usuario_activo, 
+            Amigo2=id_usuario_visitado
+            ).id
+        amistad_de_amigo = Amigos.objects.get(
+            Amigo1__id=id_usuario_visitado, 
+            Amigo2=usuario_activo.id
+            ).id
+        amistad = amistad_de_usuario if amistad_de_usuario > amistad_de_amigo else amistad_de_amigo
+        # return render(request, "chat/room.html", {
+        #     'id': usuario_activo.id, 
+        #     'visitado': id_usuario_visitado,
+        #     'usuario': request.user.id,
+        #     'amistad' : amistad
+        #     })           
 
-        texto = request.POST['texto'] #Es el texto de mnsj
+        usuario_activo = request.user.usuario
 
-        Mensajes.objects.create(
-                    Mensaje=texto, 
-                    FROM_usuario= usuario_activo, 
-                    TO_usuario = id_usuario_visitado) 
+        all_messages =  Mensajes.objects.all()
 
-        return HttpResponseRedirect("conversacion?visitado="+id_usuario_visitado)
+        messages_of_conversation = [ mensaje for mensaje in all_messages if self.is_message_in_conversation( mensaje, usuario_activo, id_usuario_visitado) ]
+        
+        CDM=all_messages.filter(TO_usuario= usuario_activo.id, recibido=False) 
+        CDM=CDM.count()
+        CDN=Notificaciones.objects.filter(para=usuario_activo.id, recibido=False) 
+        CDN=CDN.count()
+        amigo = Usuarios.objects.get(id=id_usuario_visitado)
+        messages_of_conversation=messages_of_conversation[-4 : ]
+        return render(request, "App/messages_real_time.html", {
+            'id': usuario_activo.id,
+            'CDN':CDN, 
+            'CDM':CDM,
+            'mensajes':messages_of_conversation,
+            'amigo': amigo,
+            'usuario': request.user.usuario,
+            'amistad' : amistad,
+            'usuario_foto' : request.user.usuario.Foto.url if request.user.usuario.Foto else '',
+            'amigo_foto' : amigo.Foto.url if amigo.Foto else ''
+            })
+
+    def is_message_in_conversation(self,mensaje, usuario_activo, id_usuario_visitado):
+        return (
+            (
+                str(mensaje.FROM_usuario.id) == str(usuario_activo.id) and 
+                str(mensaje.TO_usuario) == str(id_usuario_visitado)
+                ) 
+                or 
+            (
+                str(mensaje.FROM_usuario.id)==str(id_usuario_visitado) and 
+                str(mensaje.TO_usuario)==str(usuario_activo.id)
+                )
+            )
+
     
-                    

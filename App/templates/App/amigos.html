@@ -33,10 +33,18 @@
             <span class="section-heading-lower"><a href="visita/{{amigo.Amigo1.id}}">{{amigo.Amigo1.usuario.username}}</a></span><br>
             <span>Mensajes entrantes: {{value}}</span>
           </h2>  
+         <div class="d-md-flex d-block justify-content-center">
           <form action="conversacion" method="GET">
             <input type="text" value="{{amigo.Amigo1.id}}" name="visitado" style="visibility: hidden; font-size: 0px;">
+            <input type="text" value="async" name="conversation_type" style="visibility: hidden; font-size: 0px;">
+            <input type="submit" value="Abrir conversacion en tiempo real"> 
+          </form>
+          <form action="conversacion" method="GET">
+            <input type="text" value="{{amigo.Amigo1.id}}" name="visitado" style="visibility: hidden; font-size: 0px;">
+            <input type="text" value="sync" name="conversation_type" style="visibility: hidden; font-size: 0px;">
             <input type="submit" value="Abrir conversacion"> 
           </form>
+         </div>
             
           
         </div>
