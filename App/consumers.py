@@ -29,51 +29,67 @@ from channels.generic.websocket import WebsocketConsumer
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
+        print(not self.scope["user"].is_anonymous)
+        if not self.scope["user"].is_anonymous:
         
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-       
-        self.room_group_name = 'chat_%s' % self.room_name
-        # Join room group
-        async_to_sync(self.channel_layer.group_add)(
-            self.room_group_name,
-            self.channel_name
-        )
-       
-        self.accept()  
+            self.room_name = self.scope['url_route']['kwargs']['room_name']
+        
+            self.room_group_name = 'chat_%s' % self.room_name
+            # Join room group
+            async_to_sync(self.channel_layer.group_add)(
+                self.room_group_name,
+                self.channel_name
+            )
+        
+            self.accept()  
 
     def disconnect(self, close_code):
         # Leave room group
-        async_to_sync(self.channel_layer.group_discard)(
-            self.room_group_name,
-            self.channel_name
-        )
+        if not self.scope["user"].is_anonymous:
+            async_to_sync(self.channel_layer.group_discard)(
+                self.room_group_name,
+                self.channel_name
+            )
     
     # Receive message from WebSocket
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
-        id_usuario= text_data_json['usuario']
-        visitado=text_data_json['visitado']
-        remitente=Usuarios.objects.get(usuario=User.objects.get(id=id_usuario))
-        men=Mensajes(FROM_usuario=remitente, TO_usuario=visitado, Mensaje=message)
-        men.save()
-        # Send message to room group
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': {
-                    "message": message,
-                    "id_usuario": id_usuario
-                },
-                'id_usuario' : id_usuario
-            }
-        )
+        user = self.scope["user"]
+        print(not user.is_anonymous)
+        if not user.is_anonymous:
+            text_data_json = json.loads(text_data)
+            message = text_data_json['message']
+            id_usuario= text_data_json['usuario']
+            visitado=text_data_json['visitado']
+           
+            # Send message to room group
+            print(user.usuario.id in [visitado, id_usuario])
+            if int(user.usuario.id) in [int(visitado), int(id_usuario)]:
+
+                Mensajes.objects.create(
+                    FROM_usuario=user.usuario, 
+                    TO_usuario=visitado, 
+                    Mensaje=message
+                )
+                
+                async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message',
+                        'message': {
+                            "message": message,
+                            "id_usuario": id_usuario
+                        },
+                        'id_usuario' : id_usuario
+                    }
+                )
 
     # Receive message from room group
     def chat_message(self, event):
         message = event['message']
         # Send message to WebSocket
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+        user = self.scope["user"]
+        print(not user.is_anonymous)
+        if not user.is_anonymous:
+            self.send(text_data=json.dumps({
+                'message': message
+            }))
