@@ -1,9 +1,18 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Posts, Notificaciones, Comentarios, Mensajes, PostsActivos, ComentariosActivos, MensajesActivos, MensajesDesactivos, ComentariosDesactivos, PostsDesactivos
-
-
+from .models import (
+    Comentarios,
+    ComentariosActivos,
+    ComentariosDesactivos,
+    Mensajes,
+    MensajesActivos,
+    MensajesDesactivos,
+    Notificaciones,
+    Posts,
+    PostsActivos,
+    PostsDesactivos,
+)
 
 admin.site.register(Posts)
 admin.site.register(PostsActivos)
